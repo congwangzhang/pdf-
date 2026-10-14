@@ -21,14 +21,15 @@ import traceback
 from pathlib import Path
 
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, filedialog, messagebox, simpledialog
 
 sys.path.insert(0, str(Path(__file__).parent))
 from core.clean import CleanConfig, RULE_DESC
 from core.pipeline import process_pdf, find_pdfs
 from core.extract import engine_status, HAS_FITZ, HAS_PDFMINER
 from core.export import export_document, export_summary, headings_markdown, document_markdown
-from core.quality import report_markdown
+from core.quality import report_markdown, quality_report
+from core import review
 
 APP_TITLE = "文献PDF清洗工具 v1.0"
 
@@ -186,17 +187,30 @@ class App(tk.Tk):
     def _build_tab3(self):
         bar = ttk.Frame(self.tab3)
         bar.pack(fill="x")
-        ttk.Label(bar, text="所有文献的标题树（⚠️ = 层级待人工确认）。"
-                            "可整体导出，作为你综述大纲的参照。").pack(side="left")
+        ttk.Label(bar, text="标题校对：选中标题后调整层级/文字/删除，确认后自动保存。"
+                            "⚠️ = 无编号综述自动推断，建议人工确认。").pack(side="left")
         ttk.Button(bar, text="导出标题树汇总…", command=self._export_headings).pack(side="right")
+
+        tools = ttk.Frame(self.tab3)
+        tools.pack(fill="x", pady=(4, 0))
+        for txt, op in [("⬆ 升一级", "up"), ("⬇ 降一级", "down"), ("✏ 改文字", "rename"),
+                        ("🗑 删除标题", "delete"), ("✅ 确认选中", "confirm"),
+                        ("✅ 全部确认(本文)", "confirm_all"), ("↺ 恢复自动识别", "restore")]:
+            ttk.Button(tools, text=txt, command=lambda o=op: self._review_op(o)).pack(side="left", padx=2)
+        self.review_status = ttk.Label(tools, text="")
+        self.review_status.pack(side="left", padx=10)
+
         self.head_tree = ttk.Treeview(self.tab3, columns=("page", "status"),
                                       show="tree headings")
-        self.head_tree.heading("#0", text="标题层级")
+        self.head_tree.heading("#0", text="标题层级（双击改文字）")
         self.head_tree.heading("page", text="页码")
         self.head_tree.heading("status", text="状态")
         self.head_tree.column("page", width=70, anchor="center")
         self.head_tree.column("status", width=110, anchor="center")
         self.head_tree.pack(fill="both", expand=True, pady=4)
+        self.head_tree.bind("<Double-1>", lambda e: self._review_op("rename"))
+        self.head_tree.bind("<<TreeviewSelect>>", lambda e: self._update_review_status())
+        self._tree_map: dict[str, tuple[str, str]] = {}   # tree item → (文献名, 标题id)
 
     def _build_tab4(self):
         paned = ttk.Panedwindow(self.tab4, orient="horizontal")
@@ -423,6 +437,7 @@ class App(tk.Tk):
 
     def _fill_head_tree(self):
         self.head_tree.delete(*self.head_tree.get_children())
+        self._tree_map = {}
         for name in sorted(self.results.keys()):
             res = self.results[name]["result"]
             top = self.head_tree.insert("", "end", text=f"📄 {name}",
@@ -431,9 +446,90 @@ class App(tk.Tk):
                 parent = top
                 pad = "　" * (h["level"] - 1)
                 flag = " ⚠️" if h.get("confirmed") == "待确认" else ""
-                self.head_tree.insert(parent, "end",
-                                      text=f"{pad}{h.get('number', '')} {h['text']}{flag}",
-                                      values=(f"p{h['page']}", h.get("confirmed", "")))
+                iid = self.head_tree.insert(
+                    parent, "end",
+                    text=f"{pad}{h.get('number', '')} {h['text']}{flag}",
+                    values=(f"p{h['page']}", h.get("confirmed", "")))
+                self._tree_map[iid] = (name, h["id"])
+        self._update_review_status()
+
+    # ------------------------------------------------------------- 标题人工校对
+    def _review_target(self, silent: bool = False) -> tuple[str, str] | None:
+        sel = self.head_tree.selection()
+        if not sel:
+            if not silent:
+                messagebox.showinfo(APP_TITLE, "请先在标题树中选中一个标题。")
+            return None
+        return self._tree_map.get(sel[0])
+
+    def _update_review_status(self):
+        total = sum(len(v["result"].get("headings", [])) for v in self.results.values())
+        pend = sum(review.pending_count(v["result"]) for v in self.results.values())
+        self.review_status.config(
+            text=f"共 {total} 个标题，其中 {pend} 个待人工确认" if pend
+                 else f"共 {total} 个标题，全部已定")
+
+    def _review_op(self, op: str):
+        tgt = self._review_target()
+        if not tgt:
+            return
+        name, hid = tgt
+        entry = self.results.get(name)
+        if not entry:
+            return
+        res = entry["result"]
+        heads = res.get("headings", [])
+        review.snapshot(res)
+        changed = False
+
+        if op in ("up", "down", "confirm", "rename", "delete"):
+            h = next((x for x in heads if x["id"] == hid), None)
+            if not h:
+                return
+        if op == "up":
+            changed = review.adjust_level(heads, hid, -1)
+        elif op == "down":
+            changed = review.adjust_level(heads, hid, +1)
+        elif op == "confirm":
+            changed = review.confirm_heading(heads, hid)
+        elif op == "confirm_all":
+            changed = review.confirm_all(heads) > 0
+        elif op == "rename":
+            h = next((x for x in heads if x["id"] == hid), None)
+            txt = simpledialog.askstring(
+                "修改标题文字", "标题：", initialvalue=h["text"] if h else "",
+                parent=self)
+            if txt and txt.strip():
+                changed = review.rename_heading(heads, hid, txt.strip())
+        elif op == "delete":
+            if messagebox.askyesno(APP_TITLE, "确定删除选中的标题？（可点『恢复自动识别』找回）"):
+                changed = review.delete_heading(heads, hid)
+        elif op == "restore":
+            if review.restore(res):
+                changed = True
+                self._log(f"[{name}] 已恢复为自动识别结果")
+
+        if changed:
+            self._after_review_change(name)
+
+    def _after_review_change(self, name: str):
+        """校对修改后：刷新树/质检，自动导出该篇保持文件同步。"""
+        entry = self.results[name]
+        res = entry["result"]
+        entry["quality"] = quality_report(res, int(res.get("_ext_noise", 0) or 0))
+        self._fill_head_tree()
+        if self._selected(self.doc_list) == name:
+            self._show_doc()
+        if self._selected(self.q_list) == name:
+            self._show_quality()
+        s = review.review_summary(res)
+        self._log(f"[{name}] 标题校对：共 {s['total']} 个，待确认 {s['pending']}，人工确认 {s['confirmed']}")
+        try:
+            out = Path(self.out_dir.get().strip())
+            if out.exists():
+                export_document(res, entry["quality"], out, name, res.get("source_file", ""))
+        except Exception as e:
+            self._log(f"导出更新失败：{e}")
 
     def _show_quality(self):
         name = self._selected(self.q_list)

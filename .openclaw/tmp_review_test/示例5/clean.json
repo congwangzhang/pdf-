@@ -1,0 +1,237 @@
+{
+  "engine": "PyMuPDF",
+  "page_count": 2,
+  "title": "Immunosenescence and cancer: mechanisms and therapeutic targets",
+  "abstract": "Immunosenescence contributes to tumor progression. This review summarizes current knowledge on immune aging and cancer immunotherapy.",
+  "keywords": [
+    "Immunosenescence",
+    "Tumor progression",
+    "Aging"
+  ],
+  "headings": [
+    {
+      "id": "H001",
+      "level": 2,
+      "number": "",
+      "text": "免疫衰老的概念与特征（人工校对）",
+      "page": 1,
+      "order": 1,
+      "parent_id": null,
+      "line_idx": 8,
+      "inline": false,
+      "confirmed": "人工确认",
+      "basis": "字号/样式"
+    },
+    {
+      "id": "H002",
+      "level": 1,
+      "number": "",
+      "text": "Immunosenescence and cancer",
+      "page": 1,
+      "order": 2,
+      "parent_id": null,
+      "line_idx": 12,
+      "inline": false,
+      "confirmed": "人工确认",
+      "basis": "字号/样式"
+    },
+    {
+      "id": "H003",
+      "level": 1,
+      "number": "",
+      "text": "Conclusion",
+      "page": 2,
+      "order": 3,
+      "parent_id": null,
+      "line_idx": 37,
+      "inline": false,
+      "confirmed": "人工确认",
+      "basis": "常见章节名"
+    }
+  ],
+  "heading_meta": {
+    "body_size": 9.0,
+    "size_levels": {
+      "11.0": 1
+    }
+  },
+  "sections": [
+    {
+      "id": "S001",
+      "heading_id": "H001",
+      "heading": "Concept, process, and hallmarks of immunosenescence",
+      "level": 1,
+      "number": "",
+      "page_start": 1,
+      "paragraphs": [
+        {
+          "text": "of immunosenescence Immunosenescence is a multifactorial process. Its hallmarks include cell cycle arrest, telomere shortening and altered signaling.",
+          "page_start": 1,
+          "page_end": 1,
+          "line_start": 0,
+          "line_end": 2
+        }
+      ]
+    },
+    {
+      "id": "S002",
+      "heading_id": "H002",
+      "heading": "Immunosenescence and cancer",
+      "level": 1,
+      "number": "",
+      "page_start": 1,
+      "paragraphs": [
+        {
+          "text": "Generally, the risk of malignant tumors increases with age. In addition to the accumulation of genetic mutations, many researchers believe that immunosenescence may also play an important role in the tumoral process. DeSantis et al. [49] found a higher risk of tumorigenesis in the elderly group. By analyzing the age distributions of 100 different tumors, Palmer et al. [24] concluded that the immune system may play an important role in tumor development.",
+          "page_start": 1,
+          "page_end": 1,
+          "line_start": 0,
+          "line_end": 3
+        }
+      ]
+    },
+    {
+      "id": "S003",
+      "heading_id": "H003",
+      "heading": "Conclusion",
+      "level": 1,
+      "number": "",
+      "page_start": 2,
+      "paragraphs": [
+        {
+          "text": "Immunosenescence is a key driver of tumor progression. Note: extra row",
+          "page_start": 2,
+          "page_end": 2,
+          "line_start": 0,
+          "line_end": 1
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "T2",
+      "caption": "Table 2 List of the current clinical trials targeting immunosenescence",
+      "page": 1,
+      "rows": [
+        [
+          "Drug",
+          "Target",
+          "Phase",
+          "References"
+        ],
+        [
+          "Rapamycin",
+          "mTOR",
+          "2",
+          "[41, 42]"
+        ],
+        [
+          "TAB08",
+          "NCT01990157",
+          "1",
+          "[55]"
+        ],
+        [
+          "Metformin",
+          "AMPK",
+          "3",
+          "[60]"
+        ]
+      ],
+      "content": ""
+    }
+  ],
+  "figures": [
+    {
+      "id": "F1",
+      "caption": "Fig. 1 The process of immunosenescence. The process of immunosenescence can alter the immune response, thus leading to the occurrence of various diseases, such as tumors and infections.",
+      "page": 1
+    }
+  ],
+  "references": [
+    {
+      "text": "[1] A. Smith. Immune aging. Nature, 2020.",
+      "page": 2
+    },
+    {
+      "text": "[2] B. Lee et al. SASP and cancer. Cell, 2021.",
+      "page": 2
+    },
+    {
+      "text": "[3] C. Wang. T cell senescence. Immunity, 2019.",
+      "page": 2
+    }
+  ],
+  "clean_text": "Immunosenescence and cancer: mechanisms and therapeutic targets\n\nImmunosenescence contributes to tumor progression. This review summarizes current knowledge on immune aging and cancer immunotherapy.\n\nKeywords: Immunosenescence; Tumor progression; Aging\n\nConcept, process, and hallmarks of immunosenescence\n\nof immunosenescence Immunosenescence is a multifactorial process. Its hallmarks include cell cycle arrest, telomere shortening and altered signaling.\n\nImmunosenescence and cancer\n\nGenerally, the risk of malignant tumors increases with age. In addition to the accumulation of genetic mutations, many researchers believe that immunosenescence may also play an important role in the tumoral process. DeSantis et al. [49] found a higher risk of tumorigenesis in the elderly group. By analyzing the age distributions of 100 different tumors, Palmer et al. [24] concluded that the immune system may play an important role in tumor development.\n\nConclusion\n\nImmunosenescence is a key driver of tumor progression. Note: extra row",
+  "raw_text": "\n===== [PAGE 1] =====\nAgeing Research Reviews 67 (2021) 101230\n1\nImmunosenescence and cancer: mechanisms and therapeutic\ntargets\nABSTRACT\nImmunosenescence contributes to tumor progression. This review summarizes current knowledge on immune aging and\ncancer immunotherapy.\nKeywords: Immunosenescence; Tumor progression; Aging\nConcept, process, and hallmarks\nof immunosenescence\nImmunosenescence is a multifactorial process. Its hallmarks include cell cycle arrest, telomere shortening and altered\nsignaling.\nImmunosenescence and cancer\nGenerally, the risk of malignant tumors increases with age. In addition to the accumulation of genetic mutations, many\nresearchers believe that immunosenescence may also play an important role in the tumoral process.\nTable 2 List of the current clinical trials targeting immunosenescence\nDrug\nTarget\nRapamycin\nmTOR\nTAB08\nNCT01990157\nMetformin\nAMPK\nPhase\nReferences\n2\n[41, 42]\n1\n[55]\n3\n[60]\nFig. 1 The process of immunosenescence. The process of immunosenescence can alter the immune response, thus leading to the\noccurrence of various diseases, such as tumors and infections.\nDeSantis et al. [49] found a higher risk of tumorigenesis in the elderly group. By analyzing the age distributions of 100\ndifferent tumors, Palmer et al. [24] concluded that the immune system may play an important role in tumor development.\n\n===== [PAGE 2] =====\nAgeing Research Reviews 67 (2021) 101230\nConclusion\nImmunosenescence is a key driver of tumor progression.\nTable 3 Supplementary summary\nNote: extra row\nFunding\nThis work was supported by grants from the National Natural Science\nFoundation of China (Grant Nos. 9194230059, 81771781).\nReferences\n[1] A. Smith. Immune aging. Nature, 2020.\n[2] B. Lee et al. SASP and cancer. Cell, 2021.\n[3] C. Wang. T cell senescence. Immunity, 2019.\n2",
+  "line_clean_stats": {},
+  "noise_extra": 3,
+  "warnings": [],
+  "source_file": "示例PDF/示例5_无编号标题与假表格.pdf",
+  "file_hash": "c30f244ab0ae05d383ca4d2fb4e6b3aa",
+  "file_size": 11211,
+  "_ext_noise": 0,
+  "_orig_headings": [
+    {
+      "id": "H001",
+      "level": 1,
+      "number": "",
+      "text": "Concept, process, and hallmarks of immunosenescence",
+      "page": 1,
+      "order": 1,
+      "parent_id": null,
+      "line_idx": 8,
+      "inline": false,
+      "confirmed": "待确认",
+      "basis": "字号/样式"
+    },
+    {
+      "id": "H002",
+      "level": 1,
+      "number": "",
+      "text": "Immunosenescence and cancer",
+      "page": 1,
+      "order": 2,
+      "parent_id": null,
+      "line_idx": 12,
+      "inline": false,
+      "confirmed": "待确认",
+      "basis": "字号/样式"
+    },
+    {
+      "id": "H003",
+      "level": 1,
+      "number": "",
+      "text": "Conclusion",
+      "page": 2,
+      "order": 3,
+      "parent_id": null,
+      "line_idx": 37,
+      "inline": false,
+      "confirmed": "auto",
+      "basis": "常见章节名"
+    }
+  ],
+  "quality": {
+    "status": "通过",
+    "issues": [
+      {
+        "level": "提示",
+        "kind": "覆盖",
+        "message": "共处理 2 页，3 条参考文献，1 个表格标题，1 个图片标题"
+      }
+    ],
+    "stats": {
+      "pages": 2,
+      "clean_chars": 1028,
+      "garbled": 0,
+      "headings": 3,
+      "pending_headings": 0,
+      "references": 3,
+      "tables": 1,
+      "figures": 1,
+      "noise_lines": 0
+    }
+  }
+}

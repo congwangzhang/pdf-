@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 import re
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 
 from .extract import Extraction, Line
@@ -203,6 +203,23 @@ def detect_headings(lines: list[Line], body_size: float, skip_ranges: list[tuple
     def skipped(i):
         return i in skip_idx or any(a <= i <= b for a, b in skip_ranges)
 
+    # 行间垂直间隙（上下文信号）：标题上方通常有明显空行
+    gap_above: dict[int, float] = {}
+    typical_gap: dict[int, float] = {}
+    by_page: dict[int, list[int]] = defaultdict(list)
+    for i, ln in enumerate(lines):
+        by_page[ln.page].append(i)
+    for pg, idxs in by_page.items():
+        gaps = []
+        for a, b in zip(idxs, idxs[1:]):
+            g = lines[b].y0 - lines[a].y1
+            if 0 < g < 60:
+                gap_above[b] = g
+                gaps.append(g)
+        if gaps:
+            gs = sorted(gaps)
+            typical_gap[pg] = gs[len(gs) // 2]
+
     cands = []
     anchor_styles: dict[tuple, int] = {}   # 锚点标题（编号/常见章节名）的样式 → 层级
     n_lines = len(lines)
@@ -255,6 +272,9 @@ def detect_headings(lines: list[Line], body_size: float, skip_ranges: list[tuple
             continue
         if _RE_HAS_YEAR.search(t):
             continue          # 含年份/et al./引用标的的是文献条目或正文，不是标题
+        # 作者行片段：断行后的 “Liu et” / 逗号分隔的作者列表
+        if re.search(r"\bet\s*$", t) or re.match(r"^([A-Z][\w'.-]+,\s*){1,5}[A-Z][\w'.-]+$", t):
+            continue
 
         # 所在文本块的总词数：正文长句被换行拆短后也不应误判为标题
         blk_idxs, ba, bb = _block_lines(lines, i)
@@ -293,6 +313,19 @@ def detect_headings(lines: list[Line], body_size: float, skip_ranges: list[tuple
                 styled = (ln.size >= body_size + 0.5) or ((ln.bold or ln.italic) and ln.size >= body_size - 0.5)
                 if not styled or block_wc > 25 or wc < 2 or wc > 10:
                     continue          # 综述标题一般 ≤ 10 词
+                # 上下文信号：标题上方通常有空行（间隙明显大于正文行距）或居中。
+                # 字号明显大于正文的强候选不卡（部分排版标题紧贴上文）；
+                # 同字号加粗/斜体的弱候选必须满足，防段内加粗短语误判。
+                pg = ln.page
+                tg = typical_gap.get(pg, 0.0)
+                gap_ok = (tg <= 0) or (gap_above.get(i, 0.0) >= tg * 1.1)
+                centered0 = False
+                if page_widths:
+                    w0 = page_widths.get(pg, 595.0)
+                    centered0 = abs((ln.x0 + ln.x1) / 2 - w0 / 2) < 15
+                size_standout = ln.size >= body_size + 0.5
+                if not size_standout and not (gap_ok or centered0):
+                    continue          # 段落中间冒出来的加粗短语不是标题
                 if is_phrase:
                     # 段首斜体短语（模式 C 三级标题）：整行即标题
                     t = re.sub(r"[.:—-]+$", "", t).strip()

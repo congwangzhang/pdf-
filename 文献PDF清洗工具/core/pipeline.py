@@ -34,6 +34,7 @@ def process_pdf(path: str | Path, cfg: CleanConfig | None = None,
     result["source_file"] = str(path)
     result["file_hash"] = file_hash(path)
     result["file_size"] = path.stat().st_size
+    result["_ext_noise"] = noise
 
     if progress:
         progress("质量检查…")
